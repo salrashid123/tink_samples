@@ -8,8 +8,44 @@ This is just for my reference...the official examples are [here](https://github.
 
 - `client/`:  Encrypt/Decrypt string using the b64 encoded form of the keyset protobouf of `aead.AES256GCMKeyTemplate()` type.
 
+```json
+{
+  "primaryKeyId": 1791408185,
+  "key": [
+    {
+      "keyData": {
+        "typeUrl": "type.googleapis.com/google.crypto.tink.AesGcmKey",
+        "value": "GiAO06HMApt+/970XhBkkbKEqfmtCgKvimBCqih+XVaguA==",
+        "keyMaterialType": "SYMMETRIC"
+      },
+      "status": "ENABLED",
+      "keyId": 1791408185,
+      "outputPrefixType": "TINK"
+    }
+  ]
+}
+```
+
+
 - `client_kms`: Encrypt/Decrypt using Envelope encryption where the KEK is is KMS
    `keyURI = "gcp-kms://projects/mineral-minutia-820/locations/us-central1/keyRings/mykeyring/cryptoKeys/key1"`
+
+```json
+{
+  "encryptedKeyset": "AAAAdAolAJk/lVXdo5y9ROHX5ufncWvwifZDiaDiwZ0zNH9YFhj6O++gqRJLANpmZRN7qXa7bBK3AibOIRUm6C2uZ7noefjYdcYgBQKg2AQ2lbrHxjSTb/v1VlcoEKNJ17XyhVQGz38wVJ5YDQKlPObE4EUEBxFg//BM+EofmuEOQzPrE1JMe48xgU+fbCa4SF0ErssQfo/hL+C3D9FNh3ev55dW8uStXtcgXB2yMSj4krEJw1F3HFD6l5lg8POpFV2STIJTqCLQ3l4Q0BhcQlYp3NQUbJHi3DGUqr6O34VCsjjJXIRfmiNY4sSfGwMz+UG6PGtATO4OjQNKZf9G93OmYRl9U8BnUi3d4RcbepMOPQFGG0bO61Vn+vRcBBoA/8v/cTuCXdhWkKRux7GB3qEOsxCIq64tp6OUe9+v7P/xEise6dzpfeBsMY2MxvOi5LSRBKOIaykZGWc22Rm+tPIvZmnGEOMMvkLIiSLphEZN+HBYHLX4TdRKgAOtD5gOzYN7VsbmY1Q=",
+  "keysetInfo": {
+    "primaryKeyId": 2300296717,
+    "keyInfo": [
+      {
+        "typeUrl": "type.googleapis.com/google.crypto.tink.KmsEnvelopeAeadKey",
+        "status": "ENABLED",
+        "keyId": 2300296717,
+        "outputPrefixType": "TINK"
+      }
+    ]
+  }
+}
+```
 
 - `client_stream`: Encrypt/Decrypt using AEAD Stream
 

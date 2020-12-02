@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"log"
 
+	"github.com/gogo/protobuf/jsonpb"
 	"github.com/google/tink/go/aead"
 	"github.com/google/tink/go/insecurecleartextkeyset"
 	"github.com/google/tink/go/keyset"
@@ -36,6 +37,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	m := jsonpb.Marshaler{}
+	result, err := m.MarshalToString(ks)
+	if err != nil {
+		panic(err)
+	}
+
+	log.Printf("%s\n", result)
 
 	ec, err := a.Encrypt([]byte("foo"), []byte(""))
 	if err != nil {

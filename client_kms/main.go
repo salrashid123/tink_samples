@@ -19,6 +19,7 @@ import (
 func main() {
 
 	keyURI := "gcp-kms://projects/mineral-minutia-820/locations/us-central1/keyRings/mykeyring/cryptoKeys/key1"
+	kekkeyURI := "gcp-kms://projects/mineral-minutia-820/locations/us-central1/keyRings/mykeyring/cryptoKeys/key11"
 
 	gcpClient, err := gcpkms.NewClient("gcp-kms://")
 	if err != nil {
@@ -35,7 +36,7 @@ func main() {
 	memKeyset := &keyset.MemReaderWriter{}
 	dek := aead.AES256GCMKeyTemplate()
 
-	kh1, err := keyset.NewHandle(aead.KMSEnvelopeAEADKeyTemplate(keyURI, dek))
+	kh1, err := keyset.NewHandle(aead.KMSEnvelopeAEADKeyTemplate(kekkeyURI, dek))
 	if err != nil {
 		log.Printf("Could not create TINK keyHandle %v", err)
 		return

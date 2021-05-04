@@ -5,6 +5,13 @@ Just a scratchpad for [Tink](https://github.com/google/tink) examples i used (an
 
 This is just for my reference...the official examples are [here](https://github.com/google/tink/blob/master/docs/GOLANG-HOWTO.md)
 
+some more uses/references w/ Tink:
+
+* [End-to-End Stream encryption with gsutil and TINK](https://github.com/salrashid123/gcs_stream_enc)
+* [Message Payload Encryption in Google Cloud Pub/Sub](https://github.com/salrashid123/gcp_pubsub_message_encryption)
+* [Message Encryption with Dataflow PubSub Stream Processing](https://github.com/salrashid123/dataflow_pubsub_message_encryption)
+
+---
 
 - `client/`:  Encrypt/Decrypt string using the b64 encoded form of the keyset protobouf of `aead.AES256GCMKeyTemplate()` type.
 
@@ -57,4 +64,4 @@ This is just for my reference...the official examples are [here](https://github.
 - `python_tink`: Simple AEAD for python
 
 
-
+- `external`: import and use an external AES GCM Key.

@@ -1,6 +1,6 @@
 ### Import and use an external AES GCM Key with Tink
 
-1. Create AES GCM 128 key
+1. Create AES GCM 256 key
 2. Encrypt plainText using `crypto.aes`
 3. Decrypt cipherText using `cyypto.aes`
 4. Use generated key in `1` to create tink AESGCM instance ([subtle.AESGCM](https://pkg.go.dev/github.com/google/tink/go/subtle))

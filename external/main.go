@@ -8,6 +8,7 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"math/rand"
 
@@ -196,15 +197,15 @@ func main() {
 	// ./tinkey list-keyset --in-format=json --in keyset.json
 	// ./tinkey rotate-keyset --in-format=json --in keyset.json  --key-template AES256_GCM --out-format=json --out keyset2.json
 
-	// buf = new(bytes.Buffer)
-	// w = keyset.NewJSONWriter(buf)
-	// if err := w.Write(ks); err != nil {
-	// 	log.Fatal("cannot write encrypted keyset: %v", err)
-	// }
-	// err = ioutil.WriteFile("keyset.json", buf.Bytes(), 0644)
-	// if err != nil {
-	// 	log.Fatal("cannot write encrypted keyset: %v", err)
-	// }
+	buf = new(bytes.Buffer)
+	w = keyset.NewJSONWriter(buf)
+	if err := w.Write(ks); err != nil {
+		log.Fatalf("cannot write encrypted keyset: %v", err)
+	}
+	err = ioutil.WriteFile("keyset.json", buf.Bytes(), 0644)
+	if err != nil {
+		log.Fatal("cannot write encrypted keyset: %v", err)
+	}
 
 }
 

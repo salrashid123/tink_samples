@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"log"
 
-	"github.com/gogo/protobuf/jsonpb"
+	"github.com/golang/protobuf/jsonpb"
 	"github.com/google/tink/go/aead"
 	"github.com/google/tink/go/insecurecleartextkeyset"
 	"github.com/google/tink/go/keyset"

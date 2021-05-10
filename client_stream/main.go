@@ -6,7 +6,7 @@ import (
 	"io"
 	"log"
 
-	"github.com/gogo/protobuf/jsonpb"
+	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
 	"github.com/google/tink/go/insecurecleartextkeyset"
 	"github.com/google/tink/go/keyset"

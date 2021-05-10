@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/gogo/protobuf/jsonpb"
+	"github.com/golang/protobuf/jsonpb"
 	"github.com/google/tink/go/aead"
 
 	"github.com/google/tink/go/keyset"
@@ -16,10 +16,12 @@ import (
 	"github.com/google/tink/go/integration/gcpkms"
 )
 
-func main() {
+const (
+	keyURI = "gcp-kms://projects/mineral-minutia-820/locations/us-central1/keyRings/mykeyring/cryptoKeys/key1"
+	// kekkeyURI = "gcp-kms://projects/mineral-minutia-820/locations/us-central1/keyRings/mykeyring/cryptoKeys/key11"
+)
 
-	keyURI := "gcp-kms://projects/mineral-minutia-820/locations/us-central1/keyRings/mykeyring/cryptoKeys/key1"
-	kekkeyURI := "gcp-kms://projects/mineral-minutia-820/locations/us-central1/keyRings/mykeyring/cryptoKeys/key11"
+func main() {
 
 	gcpClient, err := gcpkms.NewClient("gcp-kms://")
 	if err != nil {
@@ -34,9 +36,9 @@ func main() {
 	}
 	masterKey := aead.NewKMSEnvelopeAEAD2(aead.AES256GCMKeyTemplate(), backend)
 	memKeyset := &keyset.MemReaderWriter{}
-	dek := aead.AES256GCMKeyTemplate()
-
-	kh1, err := keyset.NewHandle(aead.KMSEnvelopeAEADKeyTemplate(kekkeyURI, dek))
+	//dek := aead.AES256GCMKeyTemplate()
+	//kh1, err := keyset.NewHandle(aead.KMSEnvelopeAEADKeyTemplate(kekkeyURI, dek))
+	kh1, err := keyset.NewHandle(aead.AES256GCMKeyTemplate())
 	if err != nil {
 		log.Printf("Could not create TINK keyHandle %v", err)
 		return

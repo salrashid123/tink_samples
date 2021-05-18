@@ -86,7 +86,7 @@ func main() {
 		log.Fatalf("Failed to create primitive: %v\n", err)
 	}
 
-	file, err := os.Open("in.txt")
+	file, err := os.Open("client_stream_gcs/in.txt")
 	if err != nil {
 		log.Fatalf("Failed to open file %v\n", err)
 	}

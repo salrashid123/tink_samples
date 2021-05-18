@@ -3,9 +3,9 @@ package main
 import (
 	"bytes"
 	"encoding/base64"
+	"encoding/json"
 	"log"
 
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/google/tink/go/aead"
 	"github.com/google/tink/go/insecurecleartextkeyset"
 	"github.com/google/tink/go/keyset"
@@ -38,13 +38,19 @@ func main() {
 		log.Fatal(err)
 	}
 
-	m := jsonpb.Marshaler{}
-	result, err := m.MarshalToString(ks)
-	if err != nil {
-		panic(err)
+	buf := new(bytes.Buffer)
+	w := keyset.NewJSONWriter(buf)
+	if err := w.Write(ks); err != nil {
+		log.Printf("Could not write encrypted keyhandle %v", err)
+		return
 	}
+	var prettyJSON bytes.Buffer
+	error := json.Indent(&prettyJSON, buf.Bytes(), "", "\t")
+	if error != nil {
+		log.Fatalf("JSON parse error: %v ", error)
 
-	log.Printf("%s\n", result)
+	}
+	log.Println("Tink Keyset:\n", string(prettyJSON.Bytes()))
 
 	ec, err := a.Encrypt([]byte("foo"), []byte(""))
 	if err != nil {

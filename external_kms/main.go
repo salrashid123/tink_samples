@@ -2,7 +2,10 @@ package main
 
 import (
 	"bytes"
+	"crypto/aes"
+	"crypto/cipher"
 	"encoding/base64"
+	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
 	"log"
@@ -15,6 +18,7 @@ import (
 	"github.com/google/tink/go/aead/subtle"
 	"github.com/google/tink/go/keyset"
 	tinkpb "github.com/google/tink/go/proto/tink_go_proto"
+	"github.com/google/tink/go/subtle/random"
 
 	gcmpb "github.com/google/tink/go/proto/aes_gcm_go_proto"
 
@@ -23,7 +27,13 @@ import (
 )
 
 const (
-	keyURI = "projects/mineral-minutia-820/locations/us-central1/keyRings/mykeyring/cryptoKeys/key1"
+	AESGCMIVSize     = 12
+	NonRawPrefixSize = 5
+	TinkPrefixSize   = NonRawPrefixSize
+	TinkStartByte    = byte(1)
+	RawPrefixSize    = 0
+	RawPrefix        = ""
+	keyURI           = "projects/mineral-minutia-820/locations/us-central1/keyRings/mykeyring/cryptoKeys/key1"
 )
 
 func main() {
@@ -33,12 +43,38 @@ func main() {
 	rawKey := []byte(secret)
 	id := rand.Uint32()
 
+	aesCipher, err := aes.NewCipher(rawKey)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	// 2 Test Encrypt/Decrypt some text using plain go AESGCM encryption
+	plainText := "fooobar"
+	pt := []byte(plainText)
+	rawAES, err := cipher.NewGCM(aesCipher)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	iv := random.GetRandomBytes(AESGCMIVSize)
+	pciphertext := rawAES.Seal(nil, iv, pt, []byte(""))
+	pciphertext = append(iv, pciphertext...)
+
+	log.Printf("crypto.cipher.AEAD.Seal() %s\n", base64.StdEncoding.EncodeToString(pciphertext))
+
+	plaintext, err := rawAES.Open(nil, iv, pciphertext[AESGCMIVSize:], nil)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	log.Printf("crypto.cipher.AEAD.Unseal() %s\n", plaintext)
+
+	//****************
+	// 3 Embed that rawkey as a tink AesGcmKey and serialize it
+
 	tk, err := subtle.NewAESGCM(rawKey)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	// 2 Embed that key as a tink AesGcmKey and serialize it
 	k := &gcmpb.AesGcmKey{
 		Version:  0,
 		KeyValue: tk.Key,
@@ -50,7 +86,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// 3 construct a keyset and place the serialized key into that
+	// 4 construct a keyset and place the serialized key into that
 	keysetKey := &tinkpb.Keyset_Key{
 		KeyData: &tinkpb.KeyData{
 			TypeUrl:         "type.googleapis.com/google.crypto.tink.AesGcmKey",
@@ -67,13 +103,13 @@ func main() {
 		Key:          []*tinkpb.Keyset_Key{keysetKey},
 	}
 
-	// 4. Serialize the whole keyset
+	// 5. Serialize the whole keyset
 	rawSerialized, err := proto.Marshal(ks)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// 5. Encrypt the serialized keyset with kms
+	// 6. Encrypt the serialized keyset with kms
 	gcpClient, err := gcpkms.NewClient("gcp-kms://")
 	if err != nil {
 		log.Fatal(err)
@@ -92,7 +128,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// 6. Create  an EncryptedKeyset and embed the encrypted key into that
+	// 7. Create  an EncryptedKeyset and embed the encrypted key into that
 	ksi := &tinkpb.KeysetInfo{
 		PrimaryKeyId: keysetKey.KeyId,
 		KeyInfo: []*tinkpb.KeysetInfo_KeyInfo{
@@ -117,7 +153,7 @@ func main() {
 
 	log.Printf("   Serialized EncryptedKeyset: %s\n", base64.StdEncoding.EncodeToString(eksSerialized))
 
-	// 7. Print the Encrypted Keyset
+	// 8. Print the Encrypted Keyset
 
 	eks2 := &tinkpb.EncryptedKeyset{}
 	err = proto.Unmarshal(eksSerialized, eks2)
@@ -140,7 +176,7 @@ func main() {
 	}
 	log.Println("Tink Keyset:\n", string(prettyJSON.Bytes()))
 
-	// 8. Read the json keyset bytes using the KMS backend
+	// 9. Read the json keyset bytes using the KMS backend
 	r := keyset.NewJSONReader(&prettyJSON)
 	kh1, err := keyset.Read(r, backend)
 	if err != nil {
@@ -148,25 +184,45 @@ func main() {
 		return
 	}
 
-	// 9. Construct AEAD
+	//10. Construct AEAD
 	a, err := aead.New(kh1)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// 10. Encrypt and decrypt with that data
+	// 11. Encrypt and decrypt with that data using TINK
 
-	ct, err := a.Encrypt([]byte("this data needs to be encrypted"), []byte("associated data"))
+	ct, err := a.Encrypt(pt, []byte(""))
 	if err != nil {
 		log.Fatal(err)
 	}
 	log.Printf("Encrypted %s\n", base64.StdEncoding.EncodeToString(ct))
 
-	pt, err := a.Decrypt(ct, []byte("associated data"))
+	dpt, err := a.Decrypt(ct, []byte(""))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Printf("Cipher text: %s\nPlain text: %s\n", base64.RawStdEncoding.EncodeToString(ct), pt)
+	log.Printf("Cipher text: %s\nPlain text: %s\n", base64.RawStdEncoding.EncodeToString(ct), dpt)
 
+	// 12. Add TINK output prefix to plain ciphertext generated in step 2
+	pf := createOutputPrefix(TinkPrefixSize, TinkStartByte, id)
+	pciphertext = append([]byte(pf), pciphertext...)
+
+	// 13. Use Tink to decrypt cipherText created manually (from step 12)
+	ddpt, err := a.Decrypt(pciphertext, []byte(""))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("Cipher text: %s\nPlain text: %s\n", base64.RawStdEncoding.EncodeToString(ct), ddpt)
+
+}
+
+// https://github.com/google/tink/blob/master/go/core/cryptofmt/cryptofmt.go#L68
+func createOutputPrefix(size int, startByte byte, keyID uint32) string {
+	prefix := make([]byte, size)
+	prefix[0] = startByte
+	binary.BigEndian.PutUint32(prefix[1:], keyID)
+	return string(prefix)
 }

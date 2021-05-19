@@ -203,7 +203,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Printf("Cipher text: %s\nPlain text: %s\n", base64.RawStdEncoding.EncodeToString(ct), dpt)
+	log.Printf("Using TINK: Cipher text: %s\n", base64.RawStdEncoding.EncodeToString(ct))
+	log.Printf("Using TINK: Plain text: %s\n", dpt)
 
 	// 12. Add TINK output prefix to plain ciphertext generated in step 2
 	pf := createOutputPrefix(TinkPrefixSize, TinkStartByte, id)
@@ -215,7 +216,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Printf("Cipher text: %s\nPlain text: %s\n", base64.RawStdEncoding.EncodeToString(ct), ddpt)
+	log.Printf("Prefixed Cipher text encrypted with crypto.cipher %s\n", base64.RawStdEncoding.EncodeToString(pciphertext))
+	log.Printf("Using TINK: to decrypt data encrypted with crypto.cipher: %s\n", ddpt)
 
 }
 

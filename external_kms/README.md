@@ -1,18 +1,18 @@
 ### Import and use an external AES GCM Key with KMS Backed EncryptedKeyset
 
-1. Create an AES key
+1. Create an AES rawkey
 2. Test Encrypt/Decrypt some text using plain go AESGCM encryption
-3. Embed that rawkey as a tink AesGcmKey and serialize it
-4. Construct a KeySet and place the serialized key into that
-5. Serialize the whole KeySet
-6. Encrypt the serialized KeySet (from step 3) with KMS
-7. Create  an EncryptedKeyset and embed the encrypted KeySet into that
-8. Print the Encrypted Keyset
-9. Read the json keyset bytes using the KMS backend
+3. Embed that rawkey into a tink `AesGcmKey` and serialize it
+4. Construct a `KeySet` and place the serialized key into that
+5. Serialize the whole `KeySet`
+6. Encrypt the serialized `KeySet` with KMS
+7. Create  an `EncryptedKeyset` and embed the encrypted `KeySet` into that
+8. Print the `EncryptedKeyset`
+9. Use Tink to read the json `EncryptedKeySet` bytes using the KMS backend
 10. Construct AEAD
-11. Encrypt and decrypt some that data using 
+11. Encrypt and decrypt some that data using Tink keyset
 12. Add TINK output prefix to plain ciphertext generated in step 2  
-13. Use Tink to decrypt cipherText created manually (from step 12)
+13. Use Tink to decrypt cipherText created manually in step 12
 
 
 

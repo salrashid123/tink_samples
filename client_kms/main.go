@@ -49,16 +49,16 @@ func main() {
 		return
 	}
 
+	a, err := aead.New(kh1)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	buf := new(bytes.Buffer)
 	w := keyset.NewJSONWriter(buf)
 	if err := w.WriteEncrypted(memKeyset.EncryptedKeyset); err != nil {
 		log.Printf("Could not write encrypted keyhandle %v", err)
 		return
-	}
-
-	a, err := aead.New(kh1)
-	if err != nil {
-		log.Fatal(err)
 	}
 
 	var prettyJSON bytes.Buffer

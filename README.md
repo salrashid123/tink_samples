@@ -34,7 +34,9 @@ some more uses/references w/ Tink:
 ```
 
 
-- `client_kms`: Encrypt/Decrypt using Envelope encryption where the KEK is is KMS
+- `client_kms`: Encrypt/Decrypt using Envelope encryption where the KEK is in KMS
+   * [Envelope encryption](https://github.com/google/tink/blob/master/docs/GOLANG-HOWTO.md#envelope-encryption)
+
    `keyURI = "gcp-kms://projects/mineral-minutia-820/locations/us-central1/keyRings/mykeyring/cryptoKeys/key1"`
 
 ```json
@@ -65,3 +67,5 @@ some more uses/references w/ Tink:
 
 
 - `external`: import and use an external AES GCM Key.
+
+- `external_kms`: import and use an external AES GCM Key which is encrypted with KMS `EncryptedKeySet`.

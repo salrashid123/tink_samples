@@ -34,25 +34,45 @@ some more uses/references w/ Tink:
 ```
 
 
-- `client_kms`: Encrypt/Decrypt using Envelope encryption where the KEK is in KMS
-   * [Envelope encryption](https://github.com/google/tink/blob/master/docs/GOLANG-HOWTO.md#envelope-encryption)
+- `client_kms`: Encrypt/Decrypt using Envelope encryption where the KEK is in KMS.  THis encrypts the KeySet directly with  a KMS key
 
-   `keyURI = "gcp-kms://projects/mineral-minutia-820/locations/us-central1/keyRings/mykeyring/cryptoKeys/key1"`
+
+```json
+ {
+	"encryptedKeyset": "CiUAmT+VVR1i/HwmBQVSqROqM5gpO6wUmt+LKRqgY9VzbdG0WfHuEpUBACsKZVL5EieNkMUQTxjy2QhBAOpir5Z5o98sccXf1LlyTE5/dTzvunhdJym62HO0KF1OQi36UZxuxIm1XyknfEVJOKOksgyLfFUY7IWlJsFwGuzOhugsJEXPSYPMj0WOEYDUogH5WDJY7aP4KgubuaDUD7fRNwHZejR7L+Yz4r+9IyIRrY9YiPCF0tDfPAmtUI6ffFY=",
+	"keysetInfo": {
+		"primaryKeyId": 4015179016,
+		"keyInfo": [
+			{
+				"typeUrl": "type.googleapis.com/google.crypto.tink.AesGcmKey",
+				"status": "ENABLED",
+				"keyId": 4015179016,
+				"outputPrefixType": "TINK"
+			}
+		]
+	}
+}
+```
+
+- `client_kms_envelope`: Use `aead.NewKMSEnvelopeAEAD2`
+
+"This primitive implements envelope encryption. In envelope encryption, user generates a data encryption key (DEK) locally, encrypts data with DEK, sends DEK to a KMS to be encrypted (with a key managed by KMS), and stores encrypted DEK with encrypted data; at a later point user can retrieve encrypted data and DEK, use Storky to decrypt DEK, and use decrypted DEK to decrypt the data. The ciphertext structure is as follows: - Length of encrypted DEK: 4 bytes. - Encrypted DEK: variable length that is equal to the value specified in the last 4 bytes. - AEAD payload: variable length."
+- from [public final class KmsEnvelopeAead](https://google.github.io/tink/javadoc/tink/1.1.0/com/google/crypto/tink/aead/KmsEnvelopeAead.html)
 
 ```json
 {
-  "encryptedKeyset": "AAAAdAolAJk/lVXdo5y9ROHX5ufncWvwifZDiaDiwZ0zNH9YFhj6O++gqRJLANpmZRN7qXa7bBK3AibOIRUm6C2uZ7noefjYdcYgBQKg2AQ2lbrHxjSTb/v1VlcoEKNJ17XyhVQGz38wVJ5YDQKlPObE4EUEBxFg//BM+EofmuEOQzPrE1JMe48xgU+fbCa4SF0ErssQfo/hL+C3D9FNh3ev55dW8uStXtcgXB2yMSj4krEJw1F3HFD6l5lg8POpFV2STIJTqCLQ3l4Q0BhcQlYp3NQUbJHi3DGUqr6O34VCsjjJXIRfmiNY4sSfGwMz+UG6PGtATO4OjQNKZf9G93OmYRl9U8BnUi3d4RcbepMOPQFGG0bO61Vn+vRcBBoA/8v/cTuCXdhWkKRux7GB3qEOsxCIq64tp6OUe9+v7P/xEise6dzpfeBsMY2MxvOi5LSRBKOIaykZGWc22Rm+tPIvZmnGEOMMvkLIiSLphEZN+HBYHLX4TdRKgAOtD5gOzYN7VsbmY1Q=",
-  "keysetInfo": {
-    "primaryKeyId": 2300296717,
-    "keyInfo": [
-      {
-        "typeUrl": "type.googleapis.com/google.crypto.tink.KmsEnvelopeAeadKey",
-        "status": "ENABLED",
-        "keyId": 2300296717,
-        "outputPrefixType": "TINK"
-      }
-    ]
-  }
+	"encryptedKeyset": "AAAAdAolAJk/lVW4wjkjHJRmJzd9Zg24b4FfSlVwPiB2GFHcqZX+iMkS5RJLACsKZVJXecg1qqeb/a83n+eHPVAqDbK3EgRYY6XL2mAovAeB3Gg1DIZJXQxR74hANxPLNcogFSB2GZ1Qf6QfA97JXo7YCMk691dkpCyOihsmNqEEU27b2ZNGrVVIFpUVI0dyIJcaydL5QMcIpw+Fnk4haEn9FqcbfEBfIia5xG6WuY0e0wucB3Kn5dfJkftDsPVy7zBqMCPPKYuTJ9OKeha1x5x48T2Q9+ERhS7nH1tUcMhiTwJWdg2kCsVY43yBk9xU2EZZN9RhTnM4LCKZf6nkwg==",
+	"keysetInfo": {
+		"primaryKeyId": 1018928826,
+		"keyInfo": [
+			{
+				"typeUrl": "type.googleapis.com/google.crypto.tink.AesGcmKey",
+				"status": "ENABLED",
+				"keyId": 1018928826,
+				"outputPrefixType": "TINK"
+			}
+		]
+	}
 }
 ```
 

@@ -59,7 +59,22 @@ func main() {
 
 	log.Printf("Encrypted Data: %s", base64.StdEncoding.EncodeToString(ec))
 
-	dc, err := a.Decrypt(ec, []byte(""))
+	// now read the whole thing back from scratch
+
+	buf2 := bytes.NewBuffer(prettyJSON.Bytes())
+	r := keyset.NewJSONReader(buf2)
+	kh2, err := insecurecleartextkeyset.Read(r)
+	if err != nil {
+		log.Printf("Could not create TINK keyHandle %v", err)
+		return
+	}
+
+	b, err := aead.New(kh2)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	dc, err := b.Decrypt(ec, []byte(""))
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -20,6 +20,7 @@ const (
 )
 
 func main() {
+	// https://github.com/google/tink/issues/509
 
 	gcpClient, err := gcpkms.NewClient("gcp-kms://")
 	if err != nil {
@@ -27,29 +28,43 @@ func main() {
 	}
 	registry.RegisterKMSClient(gcpClient)
 
-	kmsAead, err := gcpClient.GetAEAD(keyURI)
+	dek := aead.AES256GCMKeyTemplate()
+	kh, err := keyset.NewHandle(aead.KMSEnvelopeAEADKeyTemplate(keyURI, dek))
 	if err != nil {
-		log.Printf("Could not acquire KMS AEAD %v", err)
-		return
+		log.Fatal(err)
 	}
-	a := aead.NewKMSEnvelopeAEAD2(aead.AES256GCMKeyTemplate(), kmsAead)
 
-	// An io.Reader and io.Writer implementation which simply writes to memory.
+	a, err := aead.New(kh)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	msg := []byte("this message needs to be encrypted")
+	aad := []byte("this data needs to be authenticated, but not encrypted")
+	ct, err := a.Encrypt(msg, aad)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	pt, err := a.Decrypt(ct, aad)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("Ciphertext: %s\n", base64.StdEncoding.EncodeToString(ct))
+	log.Printf("Original  plaintext: %s\n", msg)
+	log.Printf("Decrypted Plaintext: %s\n", pt)
+
+	// ******************
+
+	// in the following we're just re-wrapping the keyset with KMS again
+	//  Note, the ciphertext pt already contains the key encoded in it
+
 	memKeyset := &keyset.MemReaderWriter{}
-
-	kh1, err := keyset.NewHandle(aead.AES256GCMKeyTemplate())
-	if err != nil {
-		log.Printf("Could not create TINK keyHandle %v", err)
-		return
-	}
-	// Write encrypts the keyset handle with the master key and writes to the
-	// io.Writer implementation (memKeyset).  We recommend you encrypt the keyset
-	// handle before persisting it.
-	if err := kh1.Write(memKeyset, a); err != nil {
+	if err := kh.Write(memKeyset, a); err != nil {
 		log.Printf("Could not serialize KeyHandle  %v", err)
 		return
 	}
-
 	buf := new(bytes.Buffer)
 	w := keyset.NewJSONWriter(buf)
 	if err := w.WriteEncrypted(memKeyset.EncryptedKeyset); err != nil {
@@ -65,42 +80,25 @@ func main() {
 	}
 	log.Println("Tink Keyset:\n", string(prettyJSON.Bytes()))
 
-	// Create an AEAD off of the keyhandle
-	ekh, err := aead.New(kh1)
-	if error != nil {
-		log.Fatalf("JSON parse error: %v ", error)
-	}
-	ct, err := ekh.Encrypt([]byte("this data needs to be encrypted"), []byte("associated data"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Printf("Cipher text: %s", base64.RawStdEncoding.EncodeToString(ct))
+	//  reread
 
-	// now reread from scratch
-
-	//  reread the keyset
 	buf2 := bytes.NewBuffer(prettyJSON.Bytes())
 	r := keyset.NewJSONReader(buf2)
 
-	// decrypt it with the KMS handle
 	kh2, err := keyset.Read(r, a)
 	if err != nil {
 		log.Printf("Could not create TINK keyHandle %v", err)
 		return
 	}
 
-	// generate the aead
-
-	dkh, err := aead.New(kh2)
-	if error != nil {
-		log.Fatalf("JSON parse error: %v ", error)
-	}
-
-	pt, err := dkh.Decrypt(ct, []byte("associated data"))
+	b, err := aead.New(kh2)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Printf("Plain text: %s\n", pt)
-
+	pt2, err := b.Decrypt(ct, aad)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Decrypted Plaintext: %s\n", pt2)
 }

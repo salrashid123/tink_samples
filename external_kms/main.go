@@ -219,11 +219,6 @@ func main() {
 	log.Printf("Prefixed Cipher text encrypted with crypto.cipher %s\n", base64.RawStdEncoding.EncodeToString(pciphertext))
 	log.Printf("Using TINK: to decrypt data encrypted with crypto.cipher: %s\n", ddpt)
 
-	// // optionally write the keyset to a file
-	// // later you can list and rotate
-	// // ./tinkey list-keyset --in-format=json --in keyset.json
-	// // ./tinkey rotate-keyset --in-format=json --in keyset.json  --key-template AES256_GCM --out-format=json --out keyset2.json
-
 	// buf = new(bytes.Buffer)
 	// w = keyset.NewJSONWriter(buf)
 	// if err := w.Write(ks); err != nil {

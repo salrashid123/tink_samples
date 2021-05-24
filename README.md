@@ -13,7 +13,7 @@ some more uses/references w/ Tink:
 
 ---
 
-- `client/`:  Encrypt/Decrypt string using the b64 encoded form of the keyset protobouf of `aead.AES256GCMKeyTemplate()` type.
+- `client/`:  Encrypt/Decrypt string using the b64 encoded form of the keyset protobuf of `aead.AES256GCMKeyTemplate()` type.
 
 ```json
 {
@@ -36,6 +36,7 @@ some more uses/references w/ Tink:
 
 - `client_kms`: Encrypt/Decrypt using Envelope encryption where the KEK is in KMS.  THis encrypts the KeySet directly with  a KMS key
 
+Encrypted (`google.crypto.tink.AesGcmKey`).  Use this to encrypt multiple messages and save the encrypted key outside of the ciphertext storage
 
 ```json
  {
@@ -54,21 +55,21 @@ some more uses/references w/ Tink:
 }
 ```
 
-- `client_kms_envelope`: Use `aead.NewKMSEnvelopeAEAD2`
+- `client_kms_envelope`: (`google.crypto.tink.KmsEnvelopeAeadKey`)
 
-"This primitive implements envelope encryption. In envelope encryption, user generates a data encryption key (DEK) locally, encrypts data with DEK, sends DEK to a KMS to be encrypted (with a key managed by KMS), and stores encrypted DEK with encrypted data; at a later point user can retrieve encrypted data and DEK, use Storky to decrypt DEK, and use decrypted DEK to decrypt the data. The ciphertext structure is as follows: - Length of encrypted DEK: 4 bytes. - Encrypted DEK: variable length that is equal to the value specified in the last 4 bytes. - AEAD payload: variable length."
-- from [public final class KmsEnvelopeAead](https://google.github.io/tink/javadoc/tink/1.1.0/com/google/crypto/tink/aead/KmsEnvelopeAead.html)
+  Please see [https://github.com/google/tink/issues/509](https://github.com/google/tink/issues/509)
+
 
 ```json
-{
-	"encryptedKeyset": "AAAAdAolAJk/lVW4wjkjHJRmJzd9Zg24b4FfSlVwPiB2GFHcqZX+iMkS5RJLACsKZVJXecg1qqeb/a83n+eHPVAqDbK3EgRYY6XL2mAovAeB3Gg1DIZJXQxR74hANxPLNcogFSB2GZ1Qf6QfA97JXo7YCMk691dkpCyOihsmNqEEU27b2ZNGrVVIFpUVI0dyIJcaydL5QMcIpw+Fnk4haEn9FqcbfEBfIia5xG6WuY0e0wucB3Kn5dfJkftDsPVy7zBqMCPPKYuTJ9OKeha1x5x48T2Q9+ERhS7nH1tUcMhiTwJWdg2kCsVY43yBk9xU2EZZN9RhTnM4LCKZf6nkwg==",
+ {
+	"encryptedKeyset": "AWesY4MAAAB0CiUAmT+VVZjhoN5ImPXgebCOA5lut6L30orwoH6EU/27ze03L3urEksAKwplUpHAvT1TalZrFBmaDrsxmwU4pnUJfvQ1yunojPw/0vLQPvyEfvRMy99TKK4HRu4DVMSFiLR7GVMoPUD06/NPzU1o5e+D84E/30lDyYrScC5LgwgYm0q8YI/oy/SBCKju8SLaC8FY6HCOxIykF+YGcgZM5ohjtpYQe0AHWTkDQ5y0IoAbIacdM2iplhxZf8qUGfWF1M2s6WfKIukcn7CCWejxVUa8HrcaQ71N6Wo8B3TNFNA2fnyIld7Pz3KJFTz/jQqFcqhzzaoTCpQr00P0SCmecQRqYnXtMnvmBVWazWRH92FBlpuTvAgr+kREbKCb5lgfsvjhLFrHiHywY2ml2sEtkUGoFjkM5ppdoJxrtaTzhX7o1Okdqnq6yojHa6h7ezxaGjbIAP7Ls+WdaHLdRzOmG3EKLp1YXd/8nNKC/ahj75QaO8+dGXjYjmE4uo8LWF1ghLsC7w==",
 	"keysetInfo": {
-		"primaryKeyId": 1018928826,
+		"primaryKeyId": 1739350915,
 		"keyInfo": [
 			{
-				"typeUrl": "type.googleapis.com/google.crypto.tink.AesGcmKey",
+				"typeUrl": "type.googleapis.com/google.crypto.tink.KmsEnvelopeAeadKey",
 				"status": "ENABLED",
-				"keyId": 1018928826,
+				"keyId": 1739350915,
 				"outputPrefixType": "TINK"
 			}
 		]

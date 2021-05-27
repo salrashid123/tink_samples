@@ -119,24 +119,28 @@ cc = AESCipher(encoded_key=None)
 k = cc.getKey()
 cc.printKeyInfo()
 print(k)
-
-cc = AESCipher(encoded_key=k)
 enc=cc.encrypt("foo".encode('utf-8'),"none")
 print(enc)
 dec = cc.decrypt(enc,"none")
 print(dec)
 
+cd = AESCipher(encoded_key=k)
+enc=cd.encrypt("foo".encode('utf-8'),"none")
+print(enc)
+dec = cd.decrypt(enc,"none")
+print(dec)
 
-h = HMACFunctions(encoded_key=None)
-k = h.getKey()
-h.printKeyInfo()
-print(k)
 
-h = HMACFunctions(encoded_key=k)
-dd = "dsfas"
-hashed=h.hash(dd.encode('utf-8'))
-print(base64.b64encode(hashed).decode('utf-8'))
-print(h.verify(dd.encode('utf-8'),base64.b64decode(hashed)))
+# h = HMACFunctions(encoded_key=None)
+# k = h.getKey()
+# h.printKeyInfo()
+# print(k)
+
+# h = HMACFunctions(encoded_key=k)
+# dd = "dsfas"
+# hashed=h.hash(dd.encode('utf-8'))
+# print(base64.b64encode(hashed).decode('utf-8'))
+# print(h.verify(dd.encode('utf-8'),base64.b64decode(hashed)))
 
 
 # # with KMS
@@ -149,6 +153,7 @@ print(h.verify(dd.encode('utf-8'),base64.b64decode(hashed)))
 # print(k)
 
 # cc = AESCipher(encoded_key=k,key_uri=keyURI)
+# cc.printKeyInfo()
 # enc=cc.encrypt("foo".encode('utf-8'),"none")
 # print(enc)
 # dec = cc.decrypt(enc,"none")

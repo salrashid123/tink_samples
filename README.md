@@ -79,10 +79,48 @@ Encrypted (`google.crypto.tink.AesGcmKey`).  Use this to encrypt multiple messag
 
 - `client_stream`: Encrypt/Decrypt using AEAD Stream
 
-
 - `client_stream_gcs`: Encrypt/Decrypt using AEAD Stream.  Source->Destination are objects in GCS
    GCS(stream) -> Tink(stream encrypt) -> GCS(stream)
 
+- `client_hybrid`:  Hybrid encryption (eg. encrypt symmetric key with asymmetric key)
+
+```json
+ {
+	"primaryKeyId": 569289530,
+	"key": [
+		{
+			"keyData": {
+				"typeUrl": "type.googleapis.com/google.crypto.tink.EciesAeadHkdfPublicKey",
+				"value": "ElwKBAgCEAMSUhJQCjh0eXBlLmdvb2dsZWFwaXMuY29tL2dvb2dsZS5jcnlwdG8udGluay5BZXNDdHJIbWFjQWVhZEtleRISCgYKAggQEBASCAoECAMQEBAgGAEYARogK1ZsW8pVVMIPwzhm4thj0ZjSk+lpWluMIsLwm32kF9MiIEpyowCqmanFl7GuppVZVvKflZwDV1yNHhgrCxlwQsoJ",
+				"keyMaterialType": "ASYMMETRIC_PUBLIC"
+			},
+			"status": "ENABLED",
+			"keyId": 569289530,
+			"outputPrefixType": "TINK"
+		}
+	]
+}
+```
+
+- `client_signature`: DigitalSignature using EC
+
+```json
+ {
+	"primaryKeyId": 2190705367,
+	"key": [
+		{
+			"keyData": {
+				"typeUrl": "type.googleapis.com/google.crypto.tink.EcdsaPublicKey",
+				"value": "EgYIAxACGAIaIEG8Cfq3ZyZEgK/hIEqbzI1y2N5aDZewlFeDgV0Kun5mIiCp+AxtjQxscdvpx4nXoPwtQy5ue+EFATNY2GTF77BV7w==",
+				"keyMaterialType": "ASYMMETRIC_PUBLIC"
+			},
+			"status": "ENABLED",
+			"keyId": 2190705367,
+			"outputPrefixType": "RAW"
+		}
+	]
+}
+```
 
 - `python_tink`: Simple AEAD for python
 

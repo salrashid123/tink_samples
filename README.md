@@ -33,6 +33,26 @@ some more uses/references w/ Tink:
 }
 ```
 
+- `client_siv/`:  Encrypt/Decrypt using AES-SIV.
+
+```json
+ {
+	"primaryKeyId": 2596996162,
+	"key": [
+		{
+			"keyData": {
+				"typeUrl": "type.googleapis.com/google.crypto.tink.AesSivKey",
+				"value": "EkCghIBMZApqHfym2jqG7xPQ+b1T1TVY02Yc+fESzKSGeHJGqUqTgWIaTMBqogbrDv3uM8ho9C9aUHveT/1Wxl6x",
+				"keyMaterialType": "SYMMETRIC"
+			},
+			"status": "ENABLED",
+			"keyId": 2596996162,
+			"outputPrefixType": "RAW"
+		}
+	]
+}
+```
+
 
 - `client_kms`: Encrypt/Decrypt using Envelope encryption where the KEK is in KMS.  THis encrypts the KeySet directly with  a KMS key
 

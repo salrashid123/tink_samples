@@ -47,7 +47,7 @@ func main() {
 
 	// 1. AES GCM Key
 	secret := "change this password to a secret"
-	plainText := "fooobar"
+	plainText := "Greed"
 
 	rawKey := []byte(secret)
 	pt := []byte(plainText)
@@ -136,6 +136,15 @@ func main() {
 
 	}
 
+	bbw := new(bytes.Buffer)
+	bw := keyset.NewBinaryWriter(bbw)
+	if err := bw.Write(ksw.Keyset); err != nil {
+		log.Fatalf("Could not write encrypted keyhandle %v", err)
+
+	}
+
+	log.Println("Tink Keyset Encoded: ", base64.StdEncoding.EncodeToString(bbw.Bytes()))
+
 	var prettyJSON bytes.Buffer
 	error := json.Indent(&prettyJSON, buf.Bytes(), "", "\t")
 	if error != nil {
@@ -143,7 +152,7 @@ func main() {
 
 	}
 
-	log.Println("Tink Keyset:\n", string(prettyJSON.Bytes()))
+	log.Println("Tink Keyset:\n", prettyJSON.String())
 
 	// 9. create a tink AEAD to encrypt/decrypt
 	a, err := aead.New(nkh)

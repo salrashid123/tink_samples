@@ -176,7 +176,8 @@ func main() {
 
 	log.Printf("Tink Decrypted: %s", string(dec))
 
-	// 12. Prepare CipherText with Tink cipher prefix
+	// 12. Prepare CipherText with Tink cipher prefix  (for OutputPrefixType: tinkpb.OutputPrefixType_TINK, )
+	//   comment this section if using 			OutputPrefixType: tinkpb.OutputPrefixType_RAW,
 	pf := createOutputPrefix(TinkPrefixSize, TinkStartByte, id)
 	ciphertext = append([]byte(pf), ciphertext...)
 

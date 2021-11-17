@@ -45,7 +45,11 @@ class AESCipher(object):
       self.aead_primitive = self.keyset_handle.primitive(aead.Aead)
 
     def printKeyInfo(self):
-      print(self.keyset_handle.keyset_info())
+      stream = io.StringIO()
+      writer = tink.JsonKeysetWriter(stream)    
+      cleartext_keyset_handle.write(writer, self.keyset_handle)
+      return stream.getvalue()
+
 
     def getKey(self):
       iostream = io.BytesIO()
@@ -87,10 +91,12 @@ class HMACFunctions(object):
           self.keyset_handle = cleartext_keyset_handle.read(reader)        
       self.mac = self.keyset_handle.primitive(mac.Mac)
 
-
-
     def printKeyInfo(self):
-      print(self.keyset_handle.keyset_info())
+      stream = io.StringIO()
+      writer = tink.JsonKeysetWriter(stream)    
+      cleartext_keyset_handle.write(writer, self.keyset_handle)
+      return stream.getvalue()
+
 
     def getKey(self):
       iostream = io.BytesIO()
@@ -117,8 +123,7 @@ class HMACFunctions(object):
 
 cc = AESCipher(encoded_key=None)
 k = cc.getKey()
-cc.printKeyInfo()
-print(k)
+print(cc.printKeyInfo())
 enc=cc.encrypt("foo".encode('utf-8'),"none")
 print(enc)
 dec = cc.decrypt(enc,"none")
@@ -131,42 +136,40 @@ dec = cd.decrypt(enc,"none")
 print(dec)
 
 
-# h = HMACFunctions(encoded_key=None)
-# k = h.getKey()
-# h.printKeyInfo()
-# print(k)
+h = HMACFunctions(encoded_key=None)
+k = h.getKey()
+print(h.printKeyInfo())
 
-# h = HMACFunctions(encoded_key=k)
-# dd = "dsfas"
-# hashed=h.hash(dd.encode('utf-8'))
-# print(base64.b64encode(hashed).decode('utf-8'))
-# print(h.verify(dd.encode('utf-8'),base64.b64decode(hashed)))
+
+h = HMACFunctions(encoded_key=k)
+dd = "dsfas"
+hashed=h.hash(dd.encode('utf-8'))
+print(base64.b64encode(hashed).decode('utf-8'))
+print(h.verify(dd.encode('utf-8'),base64.b64decode(hashed)))
 
 
 # # with KMS
 
-# keyURI="gcp-kms://projects/mineral-minutia-820/locations/us-central1/keyRings/mykeyring/cryptoKeys/key1"
+keyURI="gcp-kms://projects/mineral-minutia-820/locations/us-central1/keyRings/mykeyring/cryptoKeys/key1"
 
-# cc = AESCipher(encoded_key=None,key_uri=keyURI)
-# k = cc.getKey()
-# cc.printKeyInfo()
-# print(k)
+cc = AESCipher(encoded_key=None,key_uri=keyURI)
+k = cc.getKey()
+print(cc.printKeyInfo())
 
-# cc = AESCipher(encoded_key=k,key_uri=keyURI)
-# cc.printKeyInfo()
-# enc=cc.encrypt("foo".encode('utf-8'),"none")
-# print(enc)
-# dec = cc.decrypt(enc,"none")
-# print(dec)
+cc = AESCipher(encoded_key=k,key_uri=keyURI)
+cc.printKeyInfo()
+enc=cc.encrypt("foo".encode('utf-8'),"none")
+print(enc)
+dec = cc.decrypt(enc,"none")
+print(dec)
 
 
-# h = HMACFunctions(encoded_key=None,key_uri=keyURI)
-# k = h.getKey()
-# h.printKeyInfo()
-# print(k)
+h = HMACFunctions(encoded_key=None,key_uri=keyURI)
+k = h.getKey()
+print(h.printKeyInfo())
 
-# h = HMACFunctions(encoded_key=k,key_uri=keyURI)
-# dd = "dsfas"
-# hashed=h.hash(dd.encode('utf-8'))
-# print(base64.b64encode(hashed).decode('utf-8'))
-# print(h.verify(dd.encode('utf-8'),base64.b64decode(hashed)))
+h = HMACFunctions(encoded_key=k,key_uri=keyURI)
+dd = "dsfas"
+hashed=h.hash(dd.encode('utf-8'))
+print(base64.b64encode(hashed).decode('utf-8'))
+print(h.verify(dd.encode('utf-8'),base64.b64decode(hashed)))

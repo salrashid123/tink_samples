@@ -77,7 +77,7 @@ func main() {
 
 	k := &gcmpb.AesGcmKey{
 		Version:  0,
-		KeyValue: tk.Key,
+		KeyValue: tk.Key(),
 	}
 	log.Printf("Tink AESGCM Key: %v", hex.EncodeToString(k.GetKeyValue()))
 

@@ -92,7 +92,7 @@ func main() {
 	// 6. create a tink AesGcmKey and serialize it
 	k := &gcmpb.AesGcmKey{
 		Version:  0,
-		KeyValue: tk.Key,
+		KeyValue: tk.Key(),
 	}
 	log.Printf("Recreated Tink RawKey: %v", hex.EncodeToString(k.GetKeyValue()))
 

@@ -6,9 +6,9 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/google/tink/go/aead"
-	"github.com/google/tink/go/insecurecleartextkeyset"
-	"github.com/google/tink/go/keyset"
+	"github.com/tink-crypto/tink-go/v2/aead"
+	"github.com/tink-crypto/tink-go/v2/insecurecleartextkeyset"
+	"github.com/tink-crypto/tink-go/v2/keyset"
 )
 
 const (

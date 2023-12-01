@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
@@ -10,17 +11,17 @@ import (
 	"log"
 	"math/rand"
 
-	"github.com/golang/protobuf/proto"
-	"github.com/google/tink/go/keyset"
-	"github.com/google/tink/go/mac"
-	"github.com/google/tink/go/mac/subtle"
-	common_go_proto "github.com/google/tink/go/proto/common_go_proto"
-	tinkpb "github.com/google/tink/go/proto/tink_go_proto"
+	"github.com/tink-crypto/tink-go/v2/keyset"
+	"github.com/tink-crypto/tink-go/v2/mac"
+	"github.com/tink-crypto/tink-go/v2/mac/subtle"
+	common_go_proto "github.com/tink-crypto/tink-go/v2/proto/common_go_proto"
+	tinkpb "github.com/tink-crypto/tink-go/v2/proto/tink_go_proto"
+	"google.golang.org/protobuf/proto"
 
-	hmacpb "github.com/google/tink/go/proto/hmac_go_proto"
+	hmacpb "github.com/tink-crypto/tink-go/v2/proto/hmac_go_proto"
 
-	"github.com/google/tink/go/core/registry"
-	"github.com/google/tink/go/integration/gcpkms"
+	gcpkms "github.com/tink-crypto/tink-go-gcpkms/v2/integration/gcpkms"
+	"github.com/tink-crypto/tink-go/v2/core/registry"
 )
 
 const (
@@ -107,7 +108,8 @@ func main() {
 	}
 
 	// Encrypt the serialized keyset with kms
-	gcpClient, err := gcpkms.NewClient("gcp-kms://")
+	ctx := context.Background()
+	gcpClient, err := gcpkms.NewClientWithOptions(ctx, "gcp-kms://")
 	if err != nil {
 		log.Fatal(err)
 	}

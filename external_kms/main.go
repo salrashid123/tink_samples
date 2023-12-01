@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/base64"
@@ -13,17 +14,18 @@ import (
 
 	//"github.com/gogo/protobuf/jsonpb"
 
-	"github.com/golang/protobuf/proto"
-	"github.com/google/tink/go/aead"
-	"github.com/google/tink/go/aead/subtle"
-	"github.com/google/tink/go/keyset"
-	tinkpb "github.com/google/tink/go/proto/tink_go_proto"
-	"github.com/google/tink/go/subtle/random"
+	"github.com/tink-crypto/tink-go/v2/aead"
+	"github.com/tink-crypto/tink-go/v2/aead/subtle"
+	"github.com/tink-crypto/tink-go/v2/keyset"
 
-	gcmpb "github.com/google/tink/go/proto/aes_gcm_go_proto"
+	tinkpb "github.com/tink-crypto/tink-go/v2/proto/tink_go_proto"
+	"github.com/tink-crypto/tink-go/v2/subtle/random"
+	"google.golang.org/protobuf/proto"
 
-	"github.com/google/tink/go/core/registry"
-	"github.com/google/tink/go/integration/gcpkms"
+	gcmpb "github.com/tink-crypto/tink-go/v2/proto/aes_gcm_go_proto"
+
+	gcpkms "github.com/tink-crypto/tink-go-gcpkms/v2/integration/gcpkms"
+	"github.com/tink-crypto/tink-go/v2/core/registry"
 )
 
 const (
@@ -110,7 +112,8 @@ func main() {
 	}
 
 	// 6. Encrypt the serialized keyset with kms
-	gcpClient, err := gcpkms.NewClient("gcp-kms://")
+	ctx := context.Background()
+	gcpClient, err := gcpkms.NewClientWithOptions(ctx, "gcp-kms://")
 	if err != nil {
 		log.Fatal(err)
 	}

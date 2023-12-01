@@ -3,16 +3,17 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"log"
 
-	"github.com/google/tink/go/aead"
+	"github.com/tink-crypto/tink-go/v2/aead"
 
-	"github.com/google/tink/go/keyset"
+	"github.com/tink-crypto/tink-go/v2/keyset"
 
-	"github.com/google/tink/go/core/registry"
-	"github.com/google/tink/go/integration/gcpkms"
+	gcpkms "github.com/tink-crypto/tink-go-gcpkms/v2/integration/gcpkms"
+	"github.com/tink-crypto/tink-go/v2/core/registry"
 )
 
 const (
@@ -22,7 +23,8 @@ const (
 func main() {
 	// https://github.com/google/tink/issues/509
 
-	gcpClient, err := gcpkms.NewClient("gcp-kms://")
+	ctx := context.Background()
+	gcpClient, err := gcpkms.NewClientWithOptions(ctx, "gcp-kms://")
 	if err != nil {
 		panic(err)
 	}

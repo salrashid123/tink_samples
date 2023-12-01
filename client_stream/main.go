@@ -7,10 +7,10 @@ import (
 	"io"
 	"log"
 
-	"github.com/golang/protobuf/proto"
-	"github.com/google/tink/go/insecurecleartextkeyset"
-	"github.com/google/tink/go/keyset"
-	"github.com/google/tink/go/streamingaead"
+	"github.com/tink-crypto/tink-go/v2/insecurecleartextkeyset"
+	"github.com/tink-crypto/tink-go/v2/keyset"
+	"github.com/tink-crypto/tink-go/v2/streamingaead"
+	"google.golang.org/protobuf/proto"
 )
 
 const (

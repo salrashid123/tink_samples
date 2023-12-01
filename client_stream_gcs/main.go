@@ -11,9 +11,9 @@ import (
 	"context"
 
 	"cloud.google.com/go/storage"
-	"github.com/google/tink/go/insecurecleartextkeyset"
-	"github.com/google/tink/go/keyset"
-	"github.com/google/tink/go/streamingaead"
+	"github.com/tink-crypto/tink-go/v2/insecurecleartextkeyset"
+	"github.com/tink-crypto/tink-go/v2/keyset"
+	"github.com/tink-crypto/tink-go/v2/streamingaead"
 	//"github.com/golang/protobuf/proto"
 )
 

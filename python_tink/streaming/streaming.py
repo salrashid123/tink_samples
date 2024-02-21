@@ -54,7 +54,7 @@ streaming_aead_primitive = keyset_handle.primitive(streaming_aead.StreamingAead)
 
 env_aead = aead.KmsEnvelopeAead(aead.aead_key_templates.AES256_GCM, gcp_aead)
 
-
+# echo -n "foosdfasfd" > plaintext.txt
 
 with open('plaintext.txt', 'rb') as input_file:
   with open('ciphertext.enc', 'wb') as output_file:
@@ -72,10 +72,11 @@ print(stream.getvalue())
 
 reader = tink.JsonKeysetReader(stream.getvalue())
 new_keyset_handle = tink.read_keyset_handle(reader, env_aead)
+new_streaming_aead_primitive = new_keyset_handle.primitive(streaming_aead.StreamingAead)
 
 
 with open('ciphertext.enc', 'rb') as input_file:
   with open('decrypted.txt', 'wb') as output_file:
-     with streaming_aead_primitive.new_decrypting_stream(input_file, b'aad') as dec_stream:
+     with new_streaming_aead_primitive.new_decrypting_stream(input_file, b'aad') as dec_stream:
        for data_block in read_as_blocks(dec_stream):
         output_file.write(data_block)

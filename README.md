@@ -149,3 +149,5 @@ Encrypted (`google.crypto.tink.AesGcmKey`).  Use this to encrypt multiple messag
 - `external_kms`: import and use an external AES GCM Key which is encrypted with KMS `EncryptedKeySet`.
 
 - `external_hmac`: import and use an external HMAC Key which is encrypted with KMS `EncryptedKeySet`.
+
+- `aes_key_convert/`: Encrypt with TINK and decrypt with crypto.aes
